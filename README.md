@@ -6,7 +6,7 @@
 
 ## 抓取要求
 
-### weibo/facebook/twitter
+### [weibo](https://github.com/nghuyong/openPostCrawl/tree/master/spider/weibo)/facebook/twitter
 
 1. 根据关键词抓取含有该关键词的微博数据
 
@@ -16,7 +16,7 @@
 
 4. 每个种子用户根据社交关系(粉丝)向外扩M层，得到的用户进行爬取（用户信息、社交关系、帖子内容）
   
-### YouTube
+### [YouTube](https://github.com/nghuyong/openPostCrawl/tree/master/spider/Youtube)
 
 1. 抓取指定用户上传的视频数据
 
