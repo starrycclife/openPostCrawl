@@ -1,0 +1,48 @@
+# -*- coding: utf-8 -*-
+
+# Define here the models for your scraped items
+#
+# See documentation in:
+# http://doc.scrapy.org/en/latest/topics/items.html
+
+from scrapy import Item, Field
+
+
+class InformationItem(Item):
+    """ 个人信息 """
+    _id = Field()  # 用户ID
+    NickName = Field()  # 昵称
+    Gender = Field()  # 性别
+    Province = Field()  # 所在省
+    City = Field()  # 所在城市
+    BriefIntroduction = Field()  # 简介
+    Birthday = Field()  # 生日
+    School = Field()  # 学校
+    RegisterTime = Field()  # 注册时间
+    Credit = Field()  # 信用
+    Num_Tweets = Field()  # 微博数
+    Num_Follows = Field()  # 关注数
+    Num_Fans = Field()  # 粉丝数
+    VIPlevel = Field()  # 会员等级
+    URL = Field()  # 首页链接
+
+
+class TweetsItem(Item):
+    """ 微博信息 """
+    name_1 = Field()
+    user_id_1 = Field()
+    created_at_1 = Field()
+    content_1 = Field()
+    weibo_url_1 = Field()
+    is_repost = Field()
+    name_2 = Field()
+    user_id_2 = Field()
+    created_at_2 = Field()
+    content_2 = Field()
+    weibo_url_2 = Field()
+
+
+class RelationshipsItem(Item):
+    """ 用户关系，只保留与关注的关系 """
+    fan_id = Field()
+    followed_id = Field()  # 被关注者的ID
