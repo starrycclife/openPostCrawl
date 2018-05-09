@@ -1,6 +1,9 @@
 # 爬虫部分
 
 ## 爬虫运行
+1. 激活虚拟环境
 
-采用../env/中的虚拟环境运行
+`cd env`
+
+`source env/bin/activate`
 

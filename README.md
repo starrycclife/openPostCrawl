@@ -29,3 +29,20 @@
 3. 爬虫数据展示
 
 4. 高级可视化，词云/数据统计等
+
+## 贡献代码
+
+1. 克隆代码:
+`git clone git@github.com:nghuyong/openPostCrawl.git`
+2. 在本地创建自己的分支:
+`git branch mybranch`
+3. 切换到自己的分支上:
+`git checkout mybranch`
+4. 开始开发，并及时commit
+5. 准备提交代码上线时候，首先fetch最新的代码：
+`git fetch origin/master`
+6. 与本地的自己分支进行合并:
+`git merge orgin/master`
+7. 提交代码
+`git push origin mybranch`
+8. 在远端提交Pull request
