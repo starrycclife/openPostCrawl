@@ -17,13 +17,13 @@ class InformationItem(Item):
     City = Field()  # 所在城市
     BriefIntroduction = Field()  # 简介
     Birthday = Field()  # 生日
-    School = Field()  # 学校
-    RegisterTime = Field()  # 注册时间
-    Credit = Field()  # 信用
     Num_Tweets = Field()  # 微博数
     Num_Follows = Field()  # 关注数
     Num_Fans = Field()  # 粉丝数
+    SexOrientation = Field()  # 性取向
+    Sentiment = Field()  # 感情状况
     VIPlevel = Field()  # 会员等级
+    Authentication = Field()  # 认证
     URL = Field()  # 首页链接
 
 

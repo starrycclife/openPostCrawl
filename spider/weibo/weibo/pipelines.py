@@ -6,7 +6,7 @@
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 import pymongo
 
-from weibo.items import RelationshipsItem, TweetsItem, InformationItem
+from weibo.items import RelationshipsItem, TweetsItem, InformationItem, RelationshipsItem
 
 
 class MongoDBPipeline(object):
@@ -14,18 +14,21 @@ class MongoDBPipeline(object):
         clinet = pymongo.MongoClient("localhost", 27017)
         db = clinet["Sina"]
         self.Tweets = db["Tweets"]
-        self.Tools = db["Tools"]
+        self.Information = db["Information"]
+        self.Relationships = db["Relationships"]
 
     def process_item(self, item, spider):
         """ 判断item的类型，并作相应的处理，再入数据库 """
         if isinstance(item, TweetsItem):
-            try:
-                self.Tweets.insert(dict(item))
-            except Exception:
-                pass
-        elif isinstance(item, ToolsItem):
-            try:
-                self.Tools.insert(dict(item))
-            except Exception:
-                pass
+            self.insert_item(self.Tweets, item)
+        elif isinstance(item, InformationItem):
+            self.insert_item(self.Information, item)
+        elif isinstance(item, RelationshipsItem):
+            self.insert_item(self.Relationships, item)
         return item
+
+    def insert_item(self, collection, item):
+        try:
+            collection.insert(dict(item))
+        except Exception:
+            pass
