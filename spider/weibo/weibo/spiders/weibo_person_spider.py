@@ -137,4 +137,4 @@ class WeiboPersonSpider(Spider):
                               meta={'level': response.meta['level'] + 1})
         next_url = selector.xpath('//a[text()="下页"]/@href').extract()
         if next_url:
-            yield Request(url=self.host + next_url[0], callback=self.parse_fans, dont_filter=True)
+            yield Request(url=self.host + next_url[0], callback=self.parse_fans, meta=response.meta, dont_filter=True)

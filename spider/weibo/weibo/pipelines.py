@@ -5,6 +5,7 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 import pymongo
+from pymongo.errors import DuplicateKeyError
 
 from weibo.items import RelationshipsItem, TweetsItem, InformationItem, RelationshipsItem
 
@@ -30,5 +31,8 @@ class MongoDBPipeline(object):
     def insert_item(self, collection, item):
         try:
             collection.insert(dict(item))
-        except Exception:
+        except DuplicateKeyError:
+            """
+            说明有重复数据
+            """
             pass
