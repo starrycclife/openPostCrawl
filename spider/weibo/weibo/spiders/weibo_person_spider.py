@@ -16,7 +16,7 @@ class WeiboPersonSpider(Spider):
     host = 'https://weibo.cn'
 
     def start_requests(self):
-        userid = '5303798085'
+        userid = '5341245051'
         yield Request(url=self.host + "/%s/info" % userid, callback=self.parse_information, meta={'level': 0})
 
     def parse_information(self, response):
@@ -25,16 +25,16 @@ class WeiboPersonSpider(Spider):
         selector = Selector(response)
         ID = re.findall('(\d+)/info', response.url)[0]
         text1 = ";".join(selector.xpath('body/div[@class="c"]//text()').extract())  # 获取标签里的所有text()
-        nickname = re.findall('昵称;[：:]?(.*?);', text1)
-        gender = re.findall('性别;[：:]?(.*?);', text1)
-        place = re.findall('地区;[：:]?(.*?);', text1)
+        nickname = re.findall('昵称;?[：:]?(.*?);', text1)
+        gender = re.findall('性别;?[：:]?(.*?);', text1)
+        place = re.findall('地区;?[：:]?(.*?);', text1)
         briefIntroduction = re.findall('简介;[：:]?(.*?);', text1)
-        birthday = re.findall('生日;[：:]?(.*?);', text1)
-        sexOrientation = re.findall('性取向;[：:]?(.*?);', text1)
-        sentiment = re.findall('感情状况;[：:]?(.*?);', text1)
-        vipLevel = re.findall('会员等级;[：:]?(.*?);', text1)
-        authentication = re.findall('认证;[：:]?(.*?);', text1)
-        url = re.findall('互联网;[：:]?(.*?);', text1)
+        birthday = re.findall('生日;?[：:]?(.*?);', text1)
+        sexOrientation = re.findall('性取向;?[：:]?(.*?);', text1)
+        sentiment = re.findall('感情状况;?[：:]?(.*?);', text1)
+        vipLevel = re.findall('会员等级;?[：:]?(.*?);', text1)
+        authentication = re.findall('认证;?[：:]?(.*?);', text1)
+        url = re.findall('互联网;?[：:]?(.*?);', text1)
         information_item["_id"] = ID
         if nickname and nickname[0]:
             information_item["NickName"] = nickname[0].replace(u"\xa0", "")
