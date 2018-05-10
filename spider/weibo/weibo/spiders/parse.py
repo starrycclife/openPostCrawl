@@ -43,6 +43,7 @@ def tweet(response):
             create_time_node = tweet_node.xpath('.//span[@class="ct"]')[0]
             create_time_info = create_time_node.xpath('string(.)').extract_first()
             tweet_item['created_at_1'] = create_time_info.split('来自')[0].strip()
+            tweet_item['_id'] = tweet_item['weibo_url_1']
             tweet_items.append(tweet_item)
     next_url = selector.xpath('//a[text()="下页"]/@href').extract()
     return tweet_items, next_url

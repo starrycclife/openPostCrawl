@@ -29,6 +29,7 @@ class InformationItem(Item):
 
 class TweetsItem(Item):
     """ 微博信息 """
+    _id = Field()
     name_1 = Field()
     user_id_1 = Field()
     created_at_1 = Field()
@@ -46,3 +47,4 @@ class RelationshipsItem(Item):
     """ 用户关系，只保留与关注的关系 """
     fan_id = Field()
     followed_id = Field()  # 被关注者的ID
+    _id = Field()

@@ -6,7 +6,6 @@
 import re
 import datetime
 from scrapy import Spider, Selector, Request
-
 from weibo.items import InformationItem, RelationshipsItem
 
 from weibo.spiders.parse import tweet
@@ -18,7 +17,7 @@ class WeiboPersonSpider(Spider):
 
     def start_requests(self):
         userid = '5303798085'
-        yield Request(url="https://weibo.cn/%s/info" % userid, callback=self.parse_information)
+        yield Request(url=self.host + "/%s/info" % userid, callback=self.parse_information, meta={'level': 0})
 
     def parse_information(self, response):
         """ 抓取个人信息 """
@@ -67,8 +66,9 @@ class WeiboPersonSpider(Spider):
             information_item["Authentication"] = authentication[0].replace(u"\xa0", "")
         if url:
             information_item["URL"] = url[0]
+        response.meta['item'] = information_item
         yield Request('https://weibo.cn/u/{}'.format(information_item['_id']), callback=self.parse_further_information,
-                      meta={'item': information_item})
+                      meta=response.meta)
 
     def parse_further_information(self, response):
         text = response.text
@@ -90,6 +90,7 @@ class WeiboPersonSpider(Spider):
         yield Request(url=self.host + '/{}/follow'.format(information_item['_id']), callback=self.parse_follow,
                       dont_filter=True)
         yield Request(url=self.host + '/{}/fans'.format(information_item['_id']), callback=self.parse_fans,
+                      meta={'level': response.meta['level']},
                       dont_filter=True)
 
     def parse_tweet(self, response):
@@ -111,6 +112,7 @@ class WeiboPersonSpider(Spider):
             relationships_item = RelationshipsItem()
             relationships_item["fan_id"] = ID
             relationships_item["followed_id"] = uid
+            relationships_item["_id"] = ID + '-' + uid
             yield relationships_item
         next_url = selector.xpath('//a[text()="下页"]/@href').extract()
         if next_url:
@@ -128,7 +130,11 @@ class WeiboPersonSpider(Spider):
             relationships_item = RelationshipsItem()
             relationships_item["fan_id"] = uid
             relationships_item["followed_id"] = ID
+            relationships_item["_id"] = uid + '-' + ID
             yield relationships_item
+            if response.meta['level'] < 2:
+                yield Request(url=self.host + "/%s/info" % uid, callback=self.parse_information,
+                              meta={'level': response.meta['level'] + 1})
         next_url = selector.xpath('//a[text()="下页"]/@href').extract()
         if next_url:
             yield Request(url=self.host + next_url[0], callback=self.parse_fans, dont_filter=True)

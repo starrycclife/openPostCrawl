@@ -2,4 +2,4 @@
 # encoding: utf-8
 from scrapy import cmdline
 
-cmdline.execute("scrapy crawl weiboSearch".split(" "))
+cmdline.execute("scrapy crawl person".split(" "))
