@@ -6,7 +6,7 @@ from weibo.spiders.parse import tweet
 
 
 class WeiboSearch(Spider):
-    name = 'weiboSearch'
+    name = 'search'
     host = 'https://weibo.cn'
 
     def start_requests(self):
