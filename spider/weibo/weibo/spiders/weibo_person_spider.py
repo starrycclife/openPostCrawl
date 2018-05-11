@@ -48,11 +48,7 @@ class WeiboPersonSpider(Spider):
         if briefIntroduction and briefIntroduction[0]:
             information_item["BriefIntroduction"] = briefIntroduction[0].replace(u"\xa0", "")
         if birthday and birthday[0]:
-            try:
-                birthday = datetime.datetime.strptime(birthday[0], "%Y-%m-%d")
-                information_item["Birthday"] = birthday - datetime.timedelta(hours=8)
-            except Exception:
-                information_item['Birthday'] = birthday[0]  # 有可能是星座，而非时间
+            information_item['Birthday'] = birthday[0]
         if sexOrientation and sexOrientation[0]:
             if sexOrientation[0].replace(u"\xa0", "") == gender[0]:
                 information_item["SexOrientation"] = "同性恋"
