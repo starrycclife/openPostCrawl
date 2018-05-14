@@ -5,8 +5,10 @@
 """
 import re
 import datetime
+from pprint import pprint
+
 from scrapy import Spider, Selector, Request
-from weibo.items import InformationItem, RelationshipsItem
+from weibo.items import InformationItem, RelationshipsItem, CommentItem
 
 from weibo.spiders.parse import tweet
 
@@ -16,7 +18,7 @@ class WeiboPersonSpider(Spider):
     host = 'https://weibo.cn'
 
     def start_requests(self):
-        userid = '5341245051'
+        userid = '6327655863'
         yield Request(url=self.host + "/%s/info" % userid, callback=self.parse_information, meta={'level': 0})
 
     def parse_information(self, response):
@@ -92,6 +94,9 @@ class WeiboPersonSpider(Spider):
     def parse_tweet(self, response):
         tweet_items, next_url = tweet(response)
         for tweet_item in tweet_items:
+            weibo_url = tweet_item['weibo_url_1'].split('/')[-1]
+            weibo_url = self.host + '/comment/' + weibo_url
+            yield Request(url=weibo_url, callback=self.parse_comment, meta={'weibo_url': weibo_url})
             yield tweet_item
         if next_url:
             yield Request(url=self.host + next_url[0], callback=self.parse_tweet, dont_filter=True)
@@ -134,3 +139,23 @@ class WeiboPersonSpider(Spider):
         next_url = selector.xpath('//a[text()="下页"]/@href').extract()
         if next_url:
             yield Request(url=self.host + next_url[0], callback=self.parse_fans, meta=response.meta, dont_filter=True)
+
+    def parse_comment(self, response):
+        selector = Selector(response)
+        comment_nodes = selector.xpath('//div[@class="c" and contains(@id,"C_")]')
+        for comment_node in comment_nodes:
+            comment_user_url = comment_node.xpath('.//a[contains(@href,"/u/")]/@href').extract_first()
+            if not comment_user_url:
+                continue
+            comment_item = CommentItem()
+            comment_item['weibo_url'] = response.meta['weibo_url']
+            comment_item['comment_user'] = re.search(r'/u/(\d+)', comment_user_url).group(1)
+            comment_item['content'] = comment_node.xpath('.//span[@class="ctt"]').xpath('string(.)').extract_first()
+            comment_item['_id'] = comment_node.xpath('./@id').extract_first()
+            created_at = comment_node.xpath('.//span[@class="ct"]/text()').extract_first()
+            comment_item['created_at'] = created_at.split('\xa0')[0]
+            yield comment_item
+        next_url = selector.xpath('//a[text()="下页"]/@href').extract()
+        if next_url:
+            yield Request(url=self.host + next_url[0], callback=self.parse_comment, meta=response.meta,
+                          dont_filter=True)

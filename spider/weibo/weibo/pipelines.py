@@ -7,7 +7,7 @@
 import pymongo
 from pymongo.errors import DuplicateKeyError
 
-from weibo.items import RelationshipsItem, TweetsItem, InformationItem, RelationshipsItem
+from weibo.items import RelationshipsItem, TweetsItem, InformationItem, RelationshipsItem, CommentItem
 
 
 class MongoDBPipeline(object):
@@ -17,6 +17,7 @@ class MongoDBPipeline(object):
         self.Tweets = db["Tweets"]
         self.Information = db["Information"]
         self.Relationships = db["Relationships"]
+        self.Comment = db["Comments"]
 
     def process_item(self, item, spider):
         """ 判断item的类型，并作相应的处理，再入数据库 """
@@ -26,6 +27,8 @@ class MongoDBPipeline(object):
             self.insert_item(self.Information, item)
         elif isinstance(item, RelationshipsItem):
             self.insert_item(self.Relationships, item)
+        elif isinstance(item, CommentItem):
+            self.insert_item(self.Comment, item)
         return item
 
     def insert_item(self, collection, item):
