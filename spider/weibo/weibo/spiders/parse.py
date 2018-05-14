@@ -39,7 +39,7 @@ def tweet(response):
             tweet_item['is_repost'] = False
             tweet_info_node = tweet_node.xpath('.//span[@class="ctt"]')[0]
             tweet_info = tweet_info_node.xpath('string(.)').extract_first()
-            tweet_item['content_1'] = tweet_info.strip().replace('\u200b', '')
+            tweet_item['content_1'] = tweet_info.strip().replace('\u200b', '').strip()
             create_time_node = tweet_node.xpath('.//span[@class="ct"]')[0]
             create_time_info = create_time_node.xpath('string(.)').extract_first()
             tweet_item['created_at_1'] = create_time_info.split('\xa0')[0].strip()

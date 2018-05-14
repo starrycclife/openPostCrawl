@@ -96,7 +96,7 @@ class WeiboPersonSpider(Spider):
         for tweet_item in tweet_items:
             weibo_url = tweet_item['weibo_url_1'].split('/')[-1]
             weibo_url = self.host + '/comment/' + weibo_url
-            yield Request(url=weibo_url, callback=self.parse_comment, meta={'weibo_url': weibo_url})
+            yield Request(url=weibo_url, callback=self.parse_comment, meta={'weibo_url': tweet_item['weibo_url_1']})
             yield tweet_item
         if next_url:
             yield Request(url=self.host + next_url[0], callback=self.parse_tweet, dont_filter=True)
