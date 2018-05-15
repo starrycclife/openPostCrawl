@@ -48,3 +48,14 @@ class RelationshipsItem(Item):
     fan_id = Field()
     followed_id = Field()  # 被关注者的ID
     _id = Field()
+
+
+class CommentItem(Item):
+    """
+    微博评论
+    """
+    weibo_url = Field()
+    comment_user = Field()
+    _id = Field()
+    content = Field()
+    created_at = Field()

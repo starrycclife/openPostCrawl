@@ -2,9 +2,7 @@
 
 ## 爬虫运行
 
-### 激活虚拟环境
+### 安装依赖
 
-`cd env`
-
-`source env/bin/activate`
+`pip install -r requirements.txt`
 
