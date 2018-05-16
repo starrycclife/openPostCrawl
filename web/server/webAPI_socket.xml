@@ -1,0 +1,7 @@
+<uwsgi>
+    <socket>:9000</socket>
+    <chdir>/home/proxypool</chdir>
+    <module>webAPI</module>
+    <processes>1</processes> <!-- 进程数 -->
+    <daemonize>log/uwsgi.txt</daemonize>
+</uwsgi>
