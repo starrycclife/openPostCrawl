@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1,   maximum-scale=1">
+    <title>社交数据抓取系统</title>
+    <link rel="stylesheet" href="../js/layui/css/layui.css">
+    <link rel="stylesheet" href="../css/main/job-list.css">
+</head>
+
+<body>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>任务</legend>
+    </fieldset>
+    <div style="padding: 20px;">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">控制面板</div>
+                    <div class="layui-card-body">
+                        <button class="layui-btn layui-btn-normal" id="create-job">创建任务</button>
+                        <button class="layui-btn layui-btn-normal" id="reload">刷新</button>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">任务列表</div>
+                    <div class="layui-card-body">
+                        <table id="job-list" lay-filter="job-list"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="create-job-layer" style="padding: 20px; height: 300px;" hidden>
+        <form class="layui-form layui-form-pane" action="">
+            <div class="layui-form-item">
+                <label class="layui-form-label">任务类型</label>
+                <div class="layui-input-block">
+                    <select lay-filter="website" name="website" lay-verify="required">
+                        <option value="">请选择</option>
+                        <option value="0">微博</option>
+                        <option value="1">Facebook</option>
+                        <option value="2">Twitter</option>
+                        <option value="3">YouTube</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item" style="display: none;" id="keyword">
+                <label class="layui-form-label">关键字</label>
+                <div class="layui-input-block">
+                    <input type="text" name="keyword" placeholder="请输入关键字" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item" style="display: none;" id="index_url">
+                <label class="layui-form-label">index_url</label>
+                <div class="layui-input-block">
+                    <input type="text" name="index_url" placeholder="请输入index_url" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item" style="display: none;" id="M">
+                <label class="layui-form-label">M</label>
+                <div class="layui-input-block">
+                    <input type="text" name="M" placeholder="请输入M" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item" style="display: none;" id="N">
+                <label class="layui-form-label">N</label>
+                <div class="layui-input-block">
+                    <input type="text" name="N" placeholder="请输入N" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item" style="bottom: 0; position: absolute;">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="form">创建任务</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="log-layer" hidden></div>
+    <script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-xs" lay-event="log">日志</a>
+        <a class="layui-btn layui-btn-xs" lay-event="detail">详情</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    </script>
+    <script src="../js/config.js"></script>
+    <script src="../js/layui/layui.js"></script>
+    <script src="../js/main/job-list.js"></script>
+</body>
+
+</html>
