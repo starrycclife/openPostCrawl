@@ -13,7 +13,7 @@ from weibo.items import RelationshipsItem, TweetsItem, InformationItem, Relation
 class MongoDBPipeline(object):
     def __init__(self):
         clinet = pymongo.MongoClient("localhost", 27017)
-        db = clinet["weibo_{}".format(settings['DBNAME'])]
+        db = clinet["{}".format(settings['DBNAME'])]
         self.Tweets = db["Tweets_{}".format(settings['CNAME'])]
         self.Information = db["Information"]
         self.Relationships = db["Relationships"]

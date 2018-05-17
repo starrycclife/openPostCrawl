@@ -7,6 +7,7 @@ import re
 import datetime
 from pprint import pprint
 
+import pymongo
 from scrapy import Spider, Selector, Request
 from weibo.items import InformationItem, RelationshipsItem, CommentItem
 
@@ -17,9 +18,18 @@ class WeiboPersonSpider(Spider):
     name = 'person'
     host = 'https://weibo.cn'
 
+    def __init__(self, N, M, job_id):
+        self.N = int(N)
+        self.M = int(M)
+        self.job_id = job_id
+
     def start_requests(self):
-        userid = '6327655863'
-        yield Request(url=self.host + "/%s/info" % userid, callback=self.parse_information, meta={'level': 0})
+        self.logger.info('starting')
+        client = pymongo.MongoClient("localhost", 27017)
+        tweets = client['{}'.format(self.job_id)]['Tweets_search'].find().limit(self.N)
+        for tweet in tweets:
+            userid = tweet['user_id_1']
+            yield Request(url=self.host + "/%s/info" % userid, callback=self.parse_information, meta={'level': 0})
 
     def parse_information(self, response):
         """ 抓取个人信息 """
@@ -99,7 +109,9 @@ class WeiboPersonSpider(Spider):
             yield Request(url=weibo_url, callback=self.parse_comment, meta={'weibo_url': tweet_item['weibo_url_1']})
             yield tweet_item
         if next_url:
-            yield Request(url=self.host + next_url[0], callback=self.parse_tweet, dont_filter=True)
+            page_num = re.search(r'page=(\d+)', str(next_url)).group(1)
+            if int(page_num) <= 2:
+                yield Request(url=self.host + next_url[0], callback=self.parse_tweet, dont_filter=True)
 
     def parse_follow(self, response):
         """
@@ -117,7 +129,9 @@ class WeiboPersonSpider(Spider):
             yield relationships_item
         next_url = selector.xpath('//a[text()="下页"]/@href').extract()
         if next_url:
-            yield Request(url=self.host + next_url[0], callback=self.parse_follow, dont_filter=True)
+            page_num = re.search(r'page=(\d+)', str(next_url)).group(1)
+            if int(page_num) <= 2:
+                yield Request(url=self.host + next_url[0], callback=self.parse_follow, dont_filter=True)
 
     def parse_fans(self, response):
         """
@@ -133,12 +147,15 @@ class WeiboPersonSpider(Spider):
             relationships_item["followed_id"] = ID
             relationships_item["_id"] = uid + '-' + ID
             yield relationships_item
-            if response.meta['level'] < 2:
+            if response.meta['level'] < self.M:
                 yield Request(url=self.host + "/%s/info" % uid, callback=self.parse_information,
                               meta={'level': response.meta['level'] + 1})
         next_url = selector.xpath('//a[text()="下页"]/@href').extract()
         if next_url:
-            yield Request(url=self.host + next_url[0], callback=self.parse_fans, meta=response.meta, dont_filter=True)
+            page_num = re.search(r'page=(\d+)', str(next_url)).group(1)
+            if int(page_num) <= 2:
+                yield Request(url=self.host + next_url[0], callback=self.parse_fans, meta=response.meta,
+                              dont_filter=True)
 
     def parse_comment(self, response):
         selector = Selector(response)
@@ -157,5 +174,7 @@ class WeiboPersonSpider(Spider):
             yield comment_item
         next_url = selector.xpath('//a[text()="下页"]/@href').extract()
         if next_url:
-            yield Request(url=self.host + next_url[0], callback=self.parse_comment, meta=response.meta,
-                          dont_filter=True)
+            page_num = re.search(r'page=(\d+)', str(next_url)).group(1)
+            if int(page_num) <= 2:
+                yield Request(url=self.host + next_url[0], callback=self.parse_comment, meta=response.meta,
+                              dont_filter=True)
