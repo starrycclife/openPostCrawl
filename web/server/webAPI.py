@@ -22,6 +22,7 @@ app = web.application(urls, globals())
 
 class static:
     def GET(self):
+        web.header("Access-Control-Allow-Origin", "*")
         try:
             get_input = web.input(_method='get')
             file_path = os.getcwd() + '/../../spider/' + get_input['file']
@@ -85,7 +86,8 @@ class jobs:
                 """
                 https://www.youtube.com/user/VOAchina/videos
                 """
-                command = "youtube-dl -o '%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s' {}".format(index_url)
+                command = "python run.py {} {}".format(data['_id'], index_url)
+                data['status'] = 'running'
             p = subprocess.Popen([command], cwd=os.getcwd() + '/../../spider/{}'.format(website), shell=True)
             data['pid'] = p.pid
             collection.insert(data)
