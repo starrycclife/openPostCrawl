@@ -97,7 +97,7 @@ class tweets:
             elif collection_name == 'relationship':
                 temp_collection = temp_db['Relationships']
             else:
-                temp_collection = temp_db['Comment']
+                temp_collection = temp_db['Comments']
             count = temp_collection.find().count()
             datas = temp_collection.find().limit(limit).skip(limit * (page - 1))
             return_data = [data for data in datas]
