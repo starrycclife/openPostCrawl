@@ -61,8 +61,8 @@ class jobs:
         data['run_timestamp'] = int(time.time())
         try:
             website = post_input['website']
+            data['website'] = website
             if website == 'weibo' or website == 'twitter':
-                data['website'] = website
                 keyword = post_input['keyword']
                 M = post_input['M']
                 N = post_input['N']
@@ -88,6 +88,8 @@ class jobs:
                 """
                 command = "python run.py {} {}".format(data['_id'], index_url)
                 data['status'] = 'running'
+                data['log'] = '{}/log/{}.log'.format(website, data['_id'])
+                data['video'] = '{}/video/{}'.format(website, data['_id'])
             p = subprocess.Popen([command], cwd=os.getcwd() + '/../../spider/{}'.format(website), shell=True)
             data['pid'] = p.pid
             collection.insert(data)

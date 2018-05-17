@@ -13,6 +13,7 @@ logger.setLevel(logging.DEBUG)  # logger的总开关，只有大于Debug的日�
 if __name__ == "__main__":
     job_id = sys.argv[1]
     index_url = sys.argv[2]
+    logger.info(index_url)
     # job_id = '123456789'
     file_handler = logging.FileHandler('log/{}.log'.format(job_id), mode='at', encoding='utf-8')
     file_handler.setLevel(logging.DEBUG)  # 输出到file的log等级的开关
@@ -33,7 +34,7 @@ if __name__ == "__main__":
     client = pymongo.MongoClient("localhost", 27017)
     db = client['web']
     collection = db['jobs']
-    job = collection.find_one({'_id': job_id})
+    job = collection.find_one({'_id': int(job_id)})
     job['status'] = 'finish'
     job['finish_timestamp'] = int(time.time())
     collection.save(job)
