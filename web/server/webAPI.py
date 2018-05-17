@@ -14,9 +14,22 @@ urls = (
     '/', 'index',
     '/jobs', 'jobs',
     '/tweets', 'tweets',
+    '/static', 'static'
 )
 
 app = web.application(urls, globals())
+
+
+class static:
+    def GET(self):
+        try:
+            get_input = web.input(_method='get')
+            file_path = os.getcwd() + '/../../spider/' + get_input['file']
+            with open(file_path, 'r', encoding='utf-8') as f:
+                text = f.read()
+                return json.dumps({'code': 0, 'message': 'get file successfully', 'data': [text]})
+        except Exception as e:
+            return json.dumps({'code': 1, 'message': str(e)})
 
 
 class index:
@@ -26,17 +39,20 @@ class index:
 
 class jobs:
     def GET(self):
+        web.header("Access-Control-Allow-Origin", "*")
         try:
             get_input = web.input(_method='get')
             page = int(get_input['page'])
             limit = int(get_input['limit'])
             jobs = collection.find().limit(limit).skip(limit * (page - 1))
             data = [job for job in jobs]
-            return json.dumps({'code': 1, 'message': 'query job successfully', 'count': len(data), 'data': data})
+            count = collection.find().count()
+            return json.dumps({'code': 0, 'message': 'query job successfully', 'count': count, 'data': data})
         except Exception as e:
-            return json.dumps({'code': 0, 'message': str(e)})
+            return json.dumps({'code': 1, 'message': str(e)})
 
     def POST(self):
+        web.header("Access-Control-Allow-Origin", "*")
         post_input = web.input(_method='post')
         try:
             keyword = post_input['keyword']
@@ -46,23 +62,23 @@ class jobs:
             data = {'keyword': keyword, 'website': website, 'create_timestamp': int(time.time()),
                     }
             data['_id'] = data['create_timestamp']
-            command = 'scrapy crawl search -a keyword={} -s LOG_FILE=log/{}.log -s DBNAME={} -s CNAME={}'.format(
+            command = 'scrapy crawl search -a keyword={} -s LOG_FILE=log/{}_search.log -s DBNAME={} -s CNAME={}'.format(
                 keyword,
                 data['_id'],
                 data['_id'],
                 "search")
             p = subprocess.Popen([command], cwd=os.getcwd() + '/../../spider/{}'.format(website), shell=True)
             data['pid'] = p.pid
-            data['status'] = 'running'
+            data['status'] = 'running-search'
             data['M'] = M
             data['N'] = N
-            data['log'] = '{}/log/{}.log'.format(website, data['_id'])
-            data['db'] = '{}_{}'.format(website, data['_id'])
+            data['log'] = '{}/log/{}_search.log'.format(website, data['_id'])
+            data['db'] = '{}'.format(data['_id'])
             data['run_timestamp'] = int(time.time())
             collection.insert(data)
-            return json.dumps({'code': 1, 'message': 'add job successfully', 'data': [data]})
+            return json.dumps({'code': 0, 'message': 'add job successfully', 'data': [data]})
         except Exception as e:
-            return json.dumps({'code': 0, 'message': str(e)})
+            return json.dumps({'code': 1, 'message': str(e)})
 
 
 class tweets:
@@ -79,9 +95,10 @@ class tweets:
             tweet_collection = tweet_db['Tweets_{}'.format(type)]
             tweets = tweet_collection.find().limit(limit).skip(limit * (page - 1))
             data = [tweet for tweet in tweets]
-            return json.dumps({'code': 1, 'message': 'query tweet successfully', 'count': len(data), 'data': data})
+            count = collection.find().count()
+            return json.dumps({'code': 0, 'message': 'query tweet successfully', 'count': count, 'data': data})
         except Exception as e:
-            return json.dumps({'code': 0, 'message': str(e)})
+            return json.dumps({'code': 1, 'message': str(e)})
 
 
 application = app.wsgifunc()

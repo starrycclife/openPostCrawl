@@ -20,13 +20,13 @@ CONCURRENT_REQUESTS = 32
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 3
+DOWNLOAD_DELAY = 5
 # The download delay setting will honor only one of:
 # CONCURRENT_REQUESTS_PER_DOMAIN = 16
 # CONCURRENT_REQUESTS_PER_IP = 16
 DEFAULT_REQUEST_HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.162 Safari/537.36',
-    'Cookie': "OUTFOX_SEARCH_USER_ID_NCOO=1780588551.4011402; browser=d2VpYm9mYXhpYW4%3D; _T_WM=767a89eeec1856d21bf83f366492de34; ALF=1528973264; SCF=AsJyCasIxgS59OhHHUWjr9OAw83N3BrFKTpCLz2myUf2NPpOwZs9hVnbSFeufTzEnrDFfMwbM2F5sHWZcjnZqrI.; SUB=_2A253_rrTDeRhGeBN6VUX9SvEzT-IHXVVAMabrDV6PUJbktANLUzlkW1NRJ24IFLP_76Z5VhKSihhN6uoT9nTRcnU; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWYACoMUZFHDoS6U9MYf.vu5JpX5K-hUgL.Foq0eoMcSK-RSoe2dJLoI7yV9cyfwgvV97tt; SUHB=0QS5VG1P74Mf40; H5_INDEX_TITLE=nghuyong; H5_INDEX=0_all; MLOGIN=1"
+    'Cookie': "SUB=_2A253-E4wDeRhGeBL6FUV9SbNwjqIHXVVA1J4rDV6PUJbkdANLW_jkW1NRw7tY6A-KMv8fX94oWRFwuPjiXLXSGOx; SUHB=0C1CqIdpQjrd6A; SCF=AvmbHEj3hrqxnMNm8KZykAIaVpLAlCEg2PGpUCztbkI_XN8uJyS_8xScESaDona03otmbDS0ZnOWb1PCrJQw_x0.; _T_WM=c19dd4aab934428b92cce2c7f4788dcd"
 }
 # Disable cookies (enabled by default)
 # COOKIES_ENABLED = False
