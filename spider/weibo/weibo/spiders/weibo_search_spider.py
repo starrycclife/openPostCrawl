@@ -3,17 +3,20 @@
 from scrapy import Spider, Request
 from weibo.items import TweetsItem
 from weibo.spiders.parse import tweet
+from scrapy import settings
 
 
 class WeiboSearch(Spider):
     name = 'search'
     host = 'https://weibo.cn'
 
+    def __init__(self, keyword):
+        self.keyword = keyword
+
     def start_requests(self):
-        keyword = '营养早餐'
-        print('current keyword {}'.format(keyword))
+        self.logger.info('current keyword {}'.format(self.keyword))
         url = 'https://weibo.cn/search/mblog?hideSearchFrame=&keyword={}&advancedfilter=1&starttime=20180301&endtime=20180401&sort=time&page=1'.format(
-            keyword)
+            self.keyword)
         yield Request(url, callback=self.parse_tweet)
 
     def parse_tweet(self, response):

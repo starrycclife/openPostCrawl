@@ -6,14 +6,14 @@
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 import pymongo
 from pymongo.errors import DuplicateKeyError
-
+from scrapy.conf import settings
 from weibo.items import RelationshipsItem, TweetsItem, InformationItem, RelationshipsItem, CommentItem
 
 
 class MongoDBPipeline(object):
     def __init__(self):
         clinet = pymongo.MongoClient("localhost", 27017)
-        db = clinet["Sina"]
+        db = clinet["weibo_{}".format(settings['DBNAME'])]
         self.Tweets = db["Tweets"]
         self.Information = db["Information"]
         self.Relationships = db["Relationships"]
