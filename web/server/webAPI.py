@@ -13,6 +13,7 @@ collection = db['jobs']
 urls = (
     '/', 'index',
     '/jobs', 'jobs',
+    '/tweets', 'tweets',
 )
 
 app = web.application(urls, globals())
@@ -45,9 +46,11 @@ class jobs:
             data = {'keyword': keyword, 'website': website, 'create_timestamp': int(time.time()),
                     }
             data['_id'] = data['create_timestamp']
-            command = 'scrapy crawl search -a keyword={} -s LOG_FILE=log/{}.log -s DBNAME={}'.format(keyword,
-                                                                                                     data['_id'],
-                                                                                                     data['_id'])
+            command = 'scrapy crawl search -a keyword={} -s LOG_FILE=log/{}.log -s DBNAME={} -s CNAME={}'.format(
+                keyword,
+                data['_id'],
+                data['_id'],
+                "search")
             p = subprocess.Popen([command], cwd=os.getcwd() + '/../../spider/{}'.format(website), shell=True)
             data['pid'] = p.pid
             data['status'] = 'running'
@@ -58,6 +61,25 @@ class jobs:
             data['run_timestamp'] = int(time.time())
             collection.insert(data)
             return json.dumps({'code': 1, 'message': 'add job successfully', 'data': [data]})
+        except Exception as e:
+            return json.dumps({'code': 0, 'message': str(e)})
+
+
+class tweets:
+    def GET(self):
+        try:
+            get_input = web.input(_method='get')
+            page = int(get_input['page'])
+            limit = int(get_input['limit'])
+            job_id = get_input['job_id']
+            job = collection.find_one({'_id': int(job_id)})
+            website = job['website']
+            type = get_input['type']
+            tweet_db = client['{}_{}'.format(website, job_id)]
+            tweet_collection = tweet_db['Tweets_{}'.format(type)]
+            tweets = tweet_collection.find().limit(limit).skip(limit * (page - 1))
+            data = [tweet for tweet in tweets]
+            return json.dumps({'code': 1, 'message': 'query tweet successfully', 'count': len(data), 'data': data})
         except Exception as e:
             return json.dumps({'code': 0, 'message': str(e)})
 

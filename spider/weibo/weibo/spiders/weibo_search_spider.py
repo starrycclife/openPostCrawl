@@ -15,7 +15,7 @@ class WeiboSearch(Spider):
 
     def start_requests(self):
         self.logger.info('current keyword {}'.format(self.keyword))
-        url = 'https://weibo.cn/search/mblog?hideSearchFrame=&keyword={}&advancedfilter=1&starttime=20180301&endtime=20180401&sort=time&page=1'.format(
+        url = 'https://weibo.cn/search/mblog?hideSearchFrame=&keyword={}&advancedfilter=1&starttime=20180101&endtime=20180501&sort=time&page=1'.format(
             self.keyword)
         yield Request(url, callback=self.parse_tweet)
 
