@@ -13,8 +13,8 @@ collection = db['jobs']
 urls = (
     '/', 'index',
     '/jobs', 'jobs',
-    '/tweets', 'tweets',
-    '/static', 'static'
+    '/(tweets|person|relationship|comment)', 'tweets',
+    '/static', 'static',
 )
 
 app = web.application(urls, globals())
@@ -82,21 +82,27 @@ class jobs:
 
 
 class tweets:
-    def GET(self):
+    def GET(self, collection_name):
         try:
             get_input = web.input(_method='get')
             page = int(get_input['page'])
             limit = int(get_input['limit'])
             job_id = get_input['job_id']
-            job = collection.find_one({'_id': int(job_id)})
-            website = job['website']
-            type = get_input['type']
-            tweet_db = client['{}_{}'.format(website, job_id)]
-            tweet_collection = tweet_db['Tweets_{}'.format(type)]
-            tweets = tweet_collection.find().limit(limit).skip(limit * (page - 1))
-            data = [tweet for tweet in tweets]
-            count = collection.find().count()
-            return json.dumps({'code': 0, 'message': 'query tweet successfully', 'count': count, 'data': data})
+            temp_db = client['{}'.format(job_id)]
+            if collection_name == 'tweets':
+                type = get_input['type']
+                temp_collection = temp_db['Tweets_{}'.format(type)]
+            elif collection_name == 'person':
+                temp_collection = temp_db['Information']
+            elif collection_name == 'relationship':
+                temp_collection = temp_db['Relationship']
+            else:
+                temp_collection = temp_db['Comment']
+            count = temp_collection.find().count()
+            datas = temp_collection.find().limit(limit).skip(limit * (page - 1))
+            return_data = [data for data in datas]
+
+            return json.dumps({'code': 0, 'message': 'query tweet successfully', 'count': count, 'data': return_data})
         except Exception as e:
             return json.dumps({'code': 1, 'message': str(e)})
 
