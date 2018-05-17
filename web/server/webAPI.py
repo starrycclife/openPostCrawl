@@ -95,13 +95,12 @@ class tweets:
             elif collection_name == 'person':
                 temp_collection = temp_db['Information']
             elif collection_name == 'relationship':
-                temp_collection = temp_db['Relationship']
+                temp_collection = temp_db['Relationships']
             else:
                 temp_collection = temp_db['Comment']
             count = temp_collection.find().count()
             datas = temp_collection.find().limit(limit).skip(limit * (page - 1))
             return_data = [data for data in datas]
-
             return json.dumps({'code': 0, 'message': 'query tweet successfully', 'count': count, 'data': return_data})
         except Exception as e:
             return json.dumps({'code': 1, 'message': str(e)})
