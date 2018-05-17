@@ -16,13 +16,11 @@
 
 ![](imgs/3.png)
 
-#### 查询微博
+#### 查询搜索微博
 
-根据type指定 
+/tweet-search
 
-type=search 为关键词搜索出来的微博
-
-type=person 为用户的微博
+#### 
 
 #### 查询用户信息
 

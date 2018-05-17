@@ -3,7 +3,6 @@
 import pymongo
 import re
 from scrapy import Spider, Request, signals
-from weibo.items import TweetsItem
 from weibo.spiders.parse import tweet
 from scrapy.conf import settings
 import subprocess
@@ -51,7 +50,7 @@ class WeiboSearch(Spider):
         tweet_items, next_url = tweet(response)
         for tweet_item in tweet_items:
             yield tweet_item
-        page_num = re.search(r'page=(\d+)', str(next_url)).group(1)
-        if int(page_num) <= 2:
-            if next_url:
+        if next_url:
+            page_num = re.search(r'page=(\d+)', str(next_url)).group(1)
+            if int(page_num) <= 2:
                 yield Request(url=self.host + next_url[0], callback=self.parse_tweet, dont_filter=True)
