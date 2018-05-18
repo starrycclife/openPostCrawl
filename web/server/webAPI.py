@@ -60,19 +60,19 @@ class jobs:
         data['run_timestamp'] = int(time.time())
         try:
             website = post_input['website']
-            if website == 'weibo' or website == 'twitter':
+            if website == 'weibo' or website == 'twitter' or website == 'facebook':
                 data['website'] = website
                 keyword = post_input['keyword']
                 M = post_input['M']
                 N = post_input['N']
                 data['keyword'] = keyword
-                if website == 'weibo':
-                    command = 'scrapy crawl search -a keyword={} -s LOG_FILE=log/{}_search.log -s DBNAME={} -s CNAME={}'.format(
+                if website == 'weibo' or website == 'facebook':
+                    command = 'scrapy crawl search -a keyword={} -s LOG_FILE=log/{}.log -s DBNAME={} -s CNAME={}'.format(
                         keyword,
                         data['_id'],
                         data['_id'],
                         "search")
-                    data['log'] = '{}/log/{}_search.log'.format(website, data['_id'])
+                    data['log'] = '{}/log/{}.log'.format(website, data['_id'])
                 else:
                     command = "python run.py {} {} {} {}".format(keyword, N, M, data['_id'])
                     data['log'] = '{}/log/{}.log'.format(website, data['_id'])

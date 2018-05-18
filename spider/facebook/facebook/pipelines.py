@@ -17,13 +17,13 @@ class MongoDBPipeline(object):
     def __init__(self):
         host = settings["MONGODB_HOST"]
         port = settings["MONGODB_PORT"]
-        dbname = settings["MONGODB_DBNAME"]
+        # dbname = settings["MONGODB_DBNAME"]
         clinet = pymongo.MongoClient(host=host, port=port)
-        db = clinet[dbname]
-        self.Posts = db["Posts"]
-        self.Persons = db["Persons"]
+        db = clinet["{}".format(settings['DBNAME'])]
+        self.Posts = db["Tweets_{}".format(settings['CNAME'])]
+        self.Persons = db["Information"]
         self.Comments = db["Comments"]
-        self.Friends = db["Friends"]
+        self.Friends = db["Relationships"]
 
     def process_item(self, item, spider):
         """ 判断item的类型，并作相应的处理，再入数据库 """
@@ -39,7 +39,7 @@ class MongoDBPipeline(object):
 
     def insert_item(self, collection, item):
         try:
-            collection.insert(dict(item))
+            collection.insert(dict(filter(lambda x: x[1], dict(item).items())))
         except DuplicateKeyError:
             logging.warning('数据重复： %s', item['_id'])
             pass
