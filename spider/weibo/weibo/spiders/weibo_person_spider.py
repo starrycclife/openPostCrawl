@@ -6,11 +6,8 @@
 import re
 import datetime
 from pprint import pprint
-
 import pymongo
 from scrapy import Spider, Selector, Request
-from scrapy.conf import settings
-
 from weibo.items import InformationItem, RelationshipsItem, CommentItem
 
 from weibo.spiders.parse import tweet
@@ -20,14 +17,15 @@ class WeiboPersonSpider(Spider):
     name = 'person'
     host = 'https://weibo.cn'
 
-    def __init__(self, N, M):
+    def __init__(self, N, M, job_id):
         self.N = int(N)
         self.M = int(M)
+        self.job_id = int(job_id)
 
     def start_requests(self):
         self.logger.info('starting')
         client = pymongo.MongoClient("localhost", 27017)
-        tweets = client[settings['DBNAME']]['Tweets_search'].find().limit(self.N)
+        tweets = client['{}'.format(self.job_id)]['Tweets_search'].find().limit(self.N)
         for tweet in tweets:
             userid = tweet['user_id_1']
             yield Request(url=self.host + "/%s/info" % userid, callback=self.parse_information, meta={'level': 0})
