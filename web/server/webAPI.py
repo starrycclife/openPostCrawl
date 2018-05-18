@@ -13,7 +13,7 @@ collection = db['jobs']
 urls = (
     '/', 'index',
     '/jobs', 'jobs',
-    '/(tweets|person|relationship|comment)', 'tweets',
+    '/(tweet-search|tweet-person|person|relationship|comment)', 'tweets',
     '/static', 'static',
 )
 
@@ -51,6 +51,20 @@ class jobs:
             return json.dumps({'code': 0, 'message': 'query job successfully', 'count': count, 'data': data})
         except Exception as e:
             return json.dumps({'code': 1, 'message': str(e)})
+
+    def DELETE(self):
+        web.header("Access-Control-Allow-Origin", "*")
+        try:
+            get_input = web.input(_method='get')
+            page = int(get_input['page'])
+            limit = int(get_input['limit'])
+            jobs = collection.find().sort("_id", pymongo.DESCENDING).limit(limit).skip(limit * (page - 1))
+            data = [job for job in jobs]
+            count = collection.find().count()
+            return json.dumps({'code': 0, 'message': 'query job successfully', 'count': count, 'data': data})
+        except Exception as e:
+            return json.dumps({'code': 1, 'message': str(e)})
+
 
     def POST(self):
         web.header("Access-Control-Allow-Origin", "*")
@@ -100,13 +114,14 @@ class jobs:
 
 class tweets:
     def GET(self, collection_name):
+        web.header("Access-Control-Allow-Origin", "*")
         try:
             get_input = web.input(_method='get')
             page = int(get_input['page'])
             limit = int(get_input['limit'])
             job_id = get_input['job_id']
             temp_db = client['{}'.format(job_id)]
-            if collection_name == 'tweets-search':
+            if collection_name == 'tweet-search':
                 temp_collection = temp_db['Tweets_search'.format(type)]
             elif collection_name == "tweet-person":
                 temp_collection = temp_db['Tweets_person'.format(type)]
