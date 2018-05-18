@@ -6,6 +6,7 @@ import time
 import web
 import pymongo
 import os
+import shutil
 
 client = pymongo.MongoClient("localhost", 27017)
 db = client['web']
@@ -13,7 +14,7 @@ collection = db['jobs']
 urls = (
     '/', 'index',
     '/jobs', 'jobs',
-    '/(tweets|person|relationship|comment)', 'tweets',
+    '/(tweet-search|tweet-person|person|relationship|comment)', 'tweets',
     '/static', 'static',
 )
 
@@ -22,6 +23,7 @@ app = web.application(urls, globals())
 
 class static:
     def GET(self):
+        web.header("Access-Control-Allow-Origin", "*")
         try:
             get_input = web.input(_method='get')
             file_path = os.getcwd() + '/../../spider/' + get_input['file']
@@ -44,10 +46,43 @@ class jobs:
             get_input = web.input(_method='get')
             page = int(get_input['page'])
             limit = int(get_input['limit'])
-            jobs = collection.find().sort("_id", pymongo.DESCENDING).limit(limit).skip(limit * (page - 1))
+            if 'website' in get_input:
+                jobs = collection.find({'website': 'youtube'}).sort("_id", pymongo.DESCENDING).limit(limit).skip(
+                    limit * (page - 1))
+                count = collection.find({'website': 'youtube'}).count()
+            else:
+                jobs = collection.find({'website': {'$ne': 'youtube'}}).sort("_id", pymongo.DESCENDING).limit(
+                    limit).skip(limit * (page - 1))
+                count = collection.find({'website': {'$ne': 'youtube'}}).count()
             data = [job for job in jobs]
-            count = collection.find().count()
+
             return json.dumps({'code': 0, 'message': 'query job successfully', 'count': count, 'data': data})
+        except Exception as e:
+            return json.dumps({'code': 1, 'message': str(e)})
+
+    def DELETE(self):
+        web.header("Access-Control-Allow-Origin", "*")
+        try:
+            get_input = web.input(_method='get')
+            job_id = get_input['job_id']
+            job = collection.find_one({'_id': int(job_id)})
+            """
+            1.先杀死进程
+            """
+            os.system('kill -9 {}'.format(job['pid']))
+            """
+            2.删除数据库
+            """
+            if job['website'] == 'youtube':
+                shutil.rmtree(os.getcwd() + '/../../spider/' + job['video'])
+            else:
+                client.drop_database(job['db'])
+            """
+            3.删除日志
+            """
+            os.remove(os.getcwd() + '/../../spider/' + job['log'])
+            collection.remove(int(job_id))
+            return json.dumps({'code': 0, 'message': 'delete job successfully'})
         except Exception as e:
             return json.dumps({'code': 1, 'message': str(e)})
 
@@ -60,8 +95,8 @@ class jobs:
         data['run_timestamp'] = int(time.time())
         try:
             website = post_input['website']
+            data['website'] = website
             if website == 'weibo' or website == 'twitter' or website == 'facebook':
-                data['website'] = website
                 keyword = post_input['keyword']
                 M = post_input['M']
                 N = post_input['N']
@@ -83,9 +118,12 @@ class jobs:
             else:
                 index_url = post_input['index_url']
                 """
-                https://www.youtube.com/user/VOAchina/videos
+                https://www.youtube.com/user/VOAchina/video
                 """
-                command = "youtube-dl -o '%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s' {}".format(index_url)
+                command = "python run.py {} {}".format(data['_id'], index_url)
+                data['status'] = 'running'
+                data['log'] = '{}/log/{}.log'.format(website, data['_id'])
+                data['video'] = '{}/video/{}'.format(website, data['_id'])
             p = subprocess.Popen([command], cwd=os.getcwd() + '/../../spider/{}'.format(website), shell=True)
             data['pid'] = p.pid
             collection.insert(data)
@@ -96,13 +134,14 @@ class jobs:
 
 class tweets:
     def GET(self, collection_name):
+        web.header("Access-Control-Allow-Origin", "*")
         try:
             get_input = web.input(_method='get')
             page = int(get_input['page'])
             limit = int(get_input['limit'])
             job_id = get_input['job_id']
             temp_db = client['{}'.format(job_id)]
-            if collection_name == 'tweets-search':
+            if collection_name == 'tweet-search':
                 temp_collection = temp_db['Tweets_search'.format(type)]
             elif collection_name == "tweet-person":
                 temp_collection = temp_db['Tweets_person'.format(type)]

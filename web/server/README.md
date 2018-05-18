@@ -10,6 +10,14 @@
 
 ![](imgs/2.png)
 
+YouTube和其他站点区别开
+
+如果查询youtube，加一个参数website
+
+### 删除
+
+![](imgs/5.png)
+
 ## 数据库
 
 ### 查询
@@ -20,7 +28,9 @@
 
 /tweet-search
 
-#### 
+#### 查询用户微博
+
+/tweet-person
 
 #### 查询用户信息
 
