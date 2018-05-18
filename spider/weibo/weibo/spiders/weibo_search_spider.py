@@ -38,6 +38,7 @@ class WeiboSearch(Spider):
         self.logger.info(os.getcwd())
         job['pid'] = p.pid
         job['status'] = 'running-person'
+        job['log'] = job['log'].replace('search', 'person')
         collection.save(job)
 
     def start_requests(self):
