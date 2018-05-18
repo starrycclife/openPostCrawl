@@ -30,7 +30,7 @@ class WeiboSearch(Spider):
         job = collection.find_one({'_id': int(jobid)})
         M = job['M']
         N = job['N']
-        command = 'scrapy crawl person -a M={} -a N={} -a job_id={} -s LOG_FILE=log/{}_person.log -s DBNAME={} -s CNAME={}'.format(
+        command = 'scrapy crawl person -a M={} -a N={} -a job_id={} -s LOG_FILE=log/{}.log -s DBNAME={} -s CNAME={}'.format(
             M, N, jobid, jobid, jobid, 'person'
         )
         self.logger.info(command)
@@ -38,7 +38,6 @@ class WeiboSearch(Spider):
         self.logger.info(os.getcwd())
         job['pid'] = p.pid
         job['status'] = 'running-person'
-        job['log'] = job['log'].replace('search', 'person')
         collection.save(job)
 
     def start_requests(self):

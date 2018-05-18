@@ -56,15 +56,24 @@ class jobs:
         web.header("Access-Control-Allow-Origin", "*")
         try:
             get_input = web.input(_method='get')
-            page = int(get_input['page'])
-            limit = int(get_input['limit'])
-            jobs = collection.find().sort("_id", pymongo.DESCENDING).limit(limit).skip(limit * (page - 1))
-            data = [job for job in jobs]
-            count = collection.find().count()
-            return json.dumps({'code': 0, 'message': 'query job successfully', 'count': count, 'data': data})
+            job_id = get_input['job_id']
+            job = collection.find_one({'_id': int(job_id)})
+            """
+            1.先杀死进程
+            """
+            os.system('kill -9 {}'.format(job['pid']))
+            """
+            2.删除数据库
+            """
+            client.drop_database(job['db'])
+            """
+            3.删除日志
+            """
+            os.remove(os.getcwd() + '/../../spider/' + job['log'])
+            collection.remove(int(job_id))
+            return json.dumps({'code': 0, 'message': 'query job successfully'})
         except Exception as e:
             return json.dumps({'code': 1, 'message': str(e)})
-
 
     def POST(self):
         web.header("Access-Control-Allow-Origin", "*")
@@ -82,12 +91,12 @@ class jobs:
                 N = post_input['N']
                 data['keyword'] = keyword
                 if website == 'weibo':
-                    command = 'scrapy crawl search -a keyword={} -s LOG_FILE=log/{}_search.log -s DBNAME={} -s CNAME={}'.format(
+                    command = 'scrapy crawl search -a keyword={} -s LOG_FILE=log/{}.log -s DBNAME={} -s CNAME={}'.format(
                         keyword,
                         data['_id'],
                         data['_id'],
                         "search")
-                    data['log'] = '{}/log/{}_search.log'.format(website, data['_id'])
+                    data['log'] = '{}/log/{}.log'.format(website, data['_id'])
                 else:
                     command = "python run.py {} {} {} {}".format(keyword, N, M, data['_id'])
                     data['log'] = '{}/log/{}.log'.format(website, data['_id'])
