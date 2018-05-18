@@ -3,20 +3,51 @@
 import time
 
 import re
-from scrapy import Spider, Request
+
+import subprocess
+
+import os
+from scrapy import Spider, Request, signals
+from scrapy.conf import settings
 from facebook.items import PostItem
+import pymongo
 
 
 class SearchPost(Spider):
-    name = 'search_post'
+    name = 'search'
     allowed_domains = ['facebook.com']
     host = 'https://m.facebook.com'
     retry_times = 0
-    keyword = '营养早餐'
-    url = 'https://m.facebook.com/graphsearch/str/{}/stories-keyword'.format(keyword)
 
-    # from scrapy import Request
-    # fetch(Request(url, cookies={'c_user': '100026187121261','xs':'19%3ABn7NOVf4AeVnng%3A2%3A1526379440%3A-1%3A-1'}))
+    page_cnt = 0
+
+    def __init__(self, keyword):
+        self.keyword = keyword
+        self.url = 'https://m.facebook.com/graphsearch/str/{}/stories-keyword'.format(keyword)
+
+    @classmethod
+    def from_crawler(cls, crawler, *args, **kwargs):
+        spider = super(SearchPost, cls).from_crawler(crawler, *args, **kwargs)
+        crawler.signals.connect(spider.spider_close, signals.spider_closed)
+        return spider
+
+    def spider_close(self):
+        client = pymongo.MongoClient("localhost", 27017)
+        db = client['web']
+        collection = db['jobs']
+        jobid = settings['DBNAME']
+        job = collection.find_one({'_id': int(jobid)})
+        M = job['M']
+        N = job['N']
+        command = 'scrapy crawl person -a M={} -a N={} -a job_id={} -s LOG_FILE=log/{}.log -s DBNAME={} -s CNAME={}'.format(
+            M, N, jobid, jobid, jobid, 'person'
+        )
+        self.logger.info(command)
+        p = subprocess.Popen([command], cwd=os.getcwd(), shell=True)
+        self.logger.info(os.getcwd())
+        job['pid'] = p.pid
+        job['status'] = 'running-person'
+        collection.save(job)
 
     def start_requests(self):
         self.logger.info('current keyword %s', self.keyword)
@@ -32,7 +63,7 @@ class SearchPost(Spider):
 
         if not post_nodes:
             self.logger.warning('等待3分钟后重试...')
-            time.sleep(60 * 0.2)  # 被封自动延迟3分钟再重试
+            time.sleep(60 * 3)  # 被封自动延迟3分钟再重试
             self.retry_times += 1
             yield Request(response.url, callback=self.parse, dont_filter=True)
             return
@@ -64,5 +95,7 @@ class SearchPost(Spider):
             yield post_item
 
         next_page = response.xpath('//div[@id="see_more_pager"]/a/@href').extract_first()
-        if next_page:
+
+        if next_page and self.page_cnt <= 10:
+            self.page_cnt += 1
             yield Request(url=next_page, callback=self.parse, dont_filter=True)

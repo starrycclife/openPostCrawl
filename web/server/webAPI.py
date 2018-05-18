@@ -96,12 +96,12 @@ class jobs:
         try:
             website = post_input['website']
             data['website'] = website
-            if website == 'weibo' or website == 'twitter':
+            if website == 'weibo' or website == 'twitter' or website == 'facebook':
                 keyword = post_input['keyword']
                 M = post_input['M']
                 N = post_input['N']
                 data['keyword'] = keyword
-                if website == 'weibo':
+                if website == 'weibo' or website == 'facebook':
                     command = 'scrapy crawl search -a keyword={} -s LOG_FILE=log/{}.log -s DBNAME={} -s CNAME={}'.format(
                         keyword,
                         data['_id'],
