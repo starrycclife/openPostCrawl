@@ -95,17 +95,13 @@ layui.use(['element', 'table', 'jquery', 'layer', 'form'], function () {
         });
       }
 
-    } else if (layEvent === 'detail') { //编辑
-      //do something
-
-      //同步更新缓存对应的值
-      obj.update({
-        username: '123',
-        title: 'xxx'
-      });
-    } else if (layEvent === 'del') { //删除
+    } else if (layEvent === 'detail') { 
+      Cookies.set('current_jobid', data._id);
+      Cookies.set('current_api', 'tweet-search');
+      window.parent.location.href="../job-detail/"; 
+    } else if (layEvent === 'del') {
       layer.confirm('真的删除行么', function (index) {
-        obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+        obj.del();
         layer.close(index);
         //向服务端发送删除指令
       });
