@@ -6,6 +6,7 @@ import time
 import web
 import pymongo
 import os
+import shutil
 
 client = pymongo.MongoClient("localhost", 27017)
 db = client['web']
@@ -45,9 +46,16 @@ class jobs:
             get_input = web.input(_method='get')
             page = int(get_input['page'])
             limit = int(get_input['limit'])
-            jobs = collection.find().sort("_id", pymongo.DESCENDING).limit(limit).skip(limit * (page - 1))
+            if 'website' in get_input:
+                jobs = collection.find({'website': 'youtube'}).sort("_id", pymongo.DESCENDING).limit(limit).skip(
+                    limit * (page - 1))
+                count = collection.find({'website': 'youtube'}).count()
+            else:
+                jobs = collection.find({'website': {'$ne': 'youtube'}}).sort("_id", pymongo.DESCENDING).limit(
+                    limit).skip(limit * (page - 1))
+                count = collection.find({'website': {'$ne': 'youtube'}}).count()
             data = [job for job in jobs]
-            count = collection.find().count()
+
             return json.dumps({'code': 0, 'message': 'query job successfully', 'count': count, 'data': data})
         except Exception as e:
             return json.dumps({'code': 1, 'message': str(e)})
@@ -65,13 +73,16 @@ class jobs:
             """
             2.删除数据库
             """
-            client.drop_database(job['db'])
+            if job['website'] == 'youtube':
+                shutil.rmtree(os.getcwd() + '/../../spider/' + job['video'])
+            else:
+                client.drop_database(job['db'])
             """
             3.删除日志
             """
             os.remove(os.getcwd() + '/../../spider/' + job['log'])
             collection.remove(int(job_id))
-            return json.dumps({'code': 0, 'message': 'query job successfully'})
+            return json.dumps({'code': 0, 'message': 'delete job successfully'})
         except Exception as e:
             return json.dumps({'code': 1, 'message': str(e)})
 
@@ -107,7 +118,7 @@ class jobs:
             else:
                 index_url = post_input['index_url']
                 """
-                https://www.youtube.com/user/VOAchina/videos
+                https://www.youtube.com/user/VOAchina/video
                 """
                 command = "python run.py {} {}".format(data['_id'], index_url)
                 data['status'] = 'running'
