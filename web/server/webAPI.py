@@ -12,10 +12,10 @@ client = pymongo.MongoClient("localhost", 27017)
 db = client['web']
 collection = db['jobs']
 urls = (
-    '/', 'index',
-    '/jobs', 'jobs',
-    '/(tweet-search|tweet-person|person|relationship|comment)', 'tweets',
-    '/static', 'static',
+    '/api/', 'index',
+    '/api/jobs', 'jobs',
+    '/api/(tweet-search|tweet-person|person|relationship|comment)', 'tweets',
+    '/api/static', 'static',
 )
 
 app = web.application(urls, globals())
@@ -36,7 +36,7 @@ class static:
 
 class index:
     def GET(self):
-        return 'Hello'
+        raise web.seeother('/imgs/1.png')
 
 
 class jobs:
