@@ -157,6 +157,7 @@ class WeiboPersonSpider(Spider):
                               dont_filter=True)
 
     def parse_comment(self, response):
+        self.logger.info('comment:{}'.format(response.url))
         selector = Selector(response)
         comment_nodes = selector.xpath('//div[@class="c" and contains(@id,"C_")]')
         for comment_node in comment_nodes:

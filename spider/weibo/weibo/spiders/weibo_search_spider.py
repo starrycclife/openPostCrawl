@@ -36,6 +36,7 @@ class WeiboSearch(Spider):
         self.logger.info(command)
         p = subprocess.Popen([command], cwd=os.getcwd(), shell=True)
         self.logger.info(os.getcwd())
+        self.logger.info('*' * 100)
         job['pid'] = p.pid
         job['status'] = 'running-person'
         collection.save(job)
@@ -52,5 +53,5 @@ class WeiboSearch(Spider):
             yield tweet_item
         if next_url:
             page_num = re.search(r'page=(\d+)', str(next_url)).group(1)
-            if int(page_num) <= 2:
+            if int(page_num) <= 10:
                 yield Request(url=self.host + next_url[0], callback=self.parse_tweet, dont_filter=True)

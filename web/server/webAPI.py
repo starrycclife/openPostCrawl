@@ -16,9 +16,22 @@ urls = (
     '/api/jobs', 'jobs',
     '/api/(tweet-search|tweet-person|person|relationship|comment)', 'tweets',
     '/api/static', 'static',
+    '/api/youtube-videos', 'videos',
 )
 
 app = web.application(urls, globals())
+
+
+class videos:
+    def GET(self):
+        web.header("Access-Control-Allow-Origin", "*")
+        try:
+            get_input = web.input(_method='get')
+            job_id = get_input['job_id']
+            videos = os.listdir('static/youtube_videos/{}'.format(job_id))
+            return json.dumps({'code': 0, 'message': 'get file successfully', 'data': [videos]})
+        except Exception as e:
+            return json.dumps({'code': 1, 'message': str(e)})
 
 
 class static:
@@ -36,7 +49,7 @@ class static:
 
 class index:
     def GET(self):
-        raise web.seeother('/imgs/1.png')
+        raise web.seeother('1.png')
 
 
 class jobs:
