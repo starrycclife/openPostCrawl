@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1,   maximum-scale=1">
+    <title>社交数据抓取系统</title>
+    <link rel="stylesheet" href="../js/layui/css/layui.css">
+    <link rel="stylesheet" href="../css/main/job-list.css">
+</head>
+
+<body>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend id='title'>选项</legend>
+    </fieldset>
+    <div style="padding: 20px;">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">Cookies</div>
+                    <div class="layui-card-body">
+                        <form class="layui-form layui-form-pane" action="">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">任务类型</label>
+                                <div class="layui-input-block">
+                                    <select lay-filter="website" name="website" lay-verify="required" id="website-select">
+                                        <option value="">请选择</option>
+                                        <option value="0">微博</option>
+                                        <option value="1">Facebook</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">Cookies</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="cookie" placeholder="请输入Cookies" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn" lay-submit lay-filter="form">提交</button>
+                                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/js.cookie-2.2.0.min.js"></script>
+    <script src="../js/layui/layui.js"></script>
+    <script src="../js/main/settings.js"></script>
+</body>
+
+</html>
