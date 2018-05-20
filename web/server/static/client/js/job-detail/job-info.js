@@ -9,7 +9,7 @@ layui.use(['laypage', 'jquery'], function () {
         else
             current_api = Cookies.get('current_api');
 
-        $.get(host + '/' + current_api + '?page=' + 1 + '&limit=' + 10 + "&job_id=" + current_jobid, function (data) {
+        $.get(host + '/api/' + current_api + '?page=' + 1 + '&limit=' + 10 + "&job_id=" + current_jobid, function (data) {
             data = JSON.parse(data)
             if (data.code == 0) {
                 laypage.render({
@@ -20,7 +20,7 @@ layui.use(['laypage', 'jquery'], function () {
                         var page = obj.curr;
                         var limit = obj.limit;
                         if (!first) {
-                            $.get(host + '/' + current_api + '?page=' + page + '&limit=' + limit + "&job_id=" + current_jobid, function (data) {
+                            $.get(host + '/api/' + current_api + '?page=' + page + '&limit=' + limit + "&job_id=" + current_jobid, function (data) {
                                 data = JSON.parse(data)
                                 if (data.code == 0) {
                                     $("#json").JSONView(data.data);
@@ -44,26 +44,8 @@ layui.use(['laypage', 'jquery'], function () {
     render();
 
     $('dd', window.parent.document).click(function () {
-        $('#title').text($(this).text())
-        switch ($(this).text()) {
-            case '搜索微博':
-                render('tweet-search');
-                break;
-            case '用户微博':
-                render('tweet-person');
-                break;
-            case '用户信息':
-                render('person');
-                break;
-            case '用户关系':
-                render('relationship');
-                break;
-            case '评论':
-                render('comment');
-                break;
-            default:
-                break;
-        }
+        $('#title').text($(this).text());
+        render($(this).data('api'));
 
 
     })
