@@ -40,7 +40,7 @@ class SearchPost(Spider):
         M = job['M']
         N = job['N']
         command = 'scrapy crawl person -a M={} -a N={} -s LOG_FILE=log/{}.log -s DBNAME={} -s CNAME={}'.format(
-            M, N, jobid, jobid, jobid, 'person'
+            M, N, jobid, jobid, 'person'
         )
         self.logger.info(command)
         p = subprocess.Popen([command], cwd=os.getcwd(), shell=True)
