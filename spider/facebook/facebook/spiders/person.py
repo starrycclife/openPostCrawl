@@ -6,7 +6,7 @@ import datetime
 from pprint import pprint
 
 import pymongo
-from scrapy import Spider, Selector, Request
+from scrapy import Spider, Selector, Request, signals
 from scrapy.conf import settings
 
 from facebook.items import PersonItem, PostItem, PersonFriendItem, CommentItem
@@ -23,6 +23,22 @@ class PersonInfoSpider(Spider):
     def __init__(self, N, M):
         self.N = int(N)
         self.M = int(M)
+
+    @classmethod
+    def from_crawler(cls, crawler, *args, **kwargs):
+        spider = super(PersonInfoSpider, cls).from_crawler(crawler, *args, **kwargs)
+        crawler.signals.connect(spider.spider_close, signals.spider_closed)
+        return spider
+
+    def spider_close(self):
+        client = pymongo.MongoClient("localhost", 27017)
+        db = client['web']
+        collection = db['jobs']
+        jobid = settings['DBNAME']
+        job = collection.find_one({'_id': int(jobid)})
+        job['status'] = 'finish'
+        job['finish_timestamp'] = int(time.time())
+        collection.save(job)
 
     def start_requests(self):
         self.logger.info('starting')
