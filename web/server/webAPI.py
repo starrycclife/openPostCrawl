@@ -8,18 +8,37 @@ import pymongo
 import os
 import shutil
 
+from pymongo.errors import DuplicateKeyError
+
 client = pymongo.MongoClient("localhost", 27017)
 db = client['web']
 collection = db['jobs']
 urls = (
-    '/api/', 'index',
     '/api/jobs', 'jobs',
     '/api/(tweet-search|tweet-person|person|relationship|comment)', 'tweets',
     '/api/static', 'static',
     '/api/youtube-videos', 'videos',
+    '/api/cookies', 'cookies',
 )
 
 app = web.application(urls, globals())
+
+
+class cookies:
+    def POST(self):
+        web.header("Access-Control-Allow-Origin", "*")
+        try:
+            get_input = web.input(_method='post')
+            website = get_input['website']
+            cookie = get_input['cookie']
+            cookie_collection = db['cookies']
+            try:
+                cookie_collection.insert({'_id': website, 'cookie': cookie})
+            except DuplicateKeyError:
+                cookie_collection.find_one_and_update({'_id': website}, {'$set': {'cookie': cookie}})
+            return json.dumps({'code': 0, 'message': 'set cookie successfully', 'data': []})
+        except Exception as e:
+            return json.dumps({'code': 1, 'message': str(e)})
 
 
 class videos:
@@ -29,7 +48,7 @@ class videos:
             get_input = web.input(_method='get')
             job_id = get_input['job_id']
             videos = os.listdir('static/youtube_videos/{}'.format(job_id))
-            return json.dumps({'code': 0, 'message': 'get file successfully', 'data': [videos]})
+            return json.dumps({'code': 0, 'message': 'get videos successfully', 'data': [videos]})
         except Exception as e:
             return json.dumps({'code': 1, 'message': str(e)})
 
@@ -47,19 +66,20 @@ class static:
             return json.dumps({'code': 1, 'message': str(e)})
 
 
-class index:
-    def GET(self):
-        raise web.seeother('1.png')
-
-
 class jobs:
+    def OPTIONS(self):
+        web.header("Access-Control-Allow-Origin", "*")
+        web.header("Access-Control-Allow-Methods", "*")
+        return None
+
     def GET(self):
         web.header("Access-Control-Allow-Origin", "*")
         try:
             get_input = web.input(_method='get')
             page = int(get_input['page'])
             limit = int(get_input['limit'])
-            if 'website' in get_input:
+            website = get_input['website']
+            if website == 'youtube':
                 jobs = collection.find({'website': 'youtube'}).sort("_id", pymongo.DESCENDING).limit(limit).skip(
                     limit * (page - 1))
                 count = collection.find({'website': 'youtube'}).count()
@@ -87,7 +107,7 @@ class jobs:
             2.删除数据库
             """
             if job['website'] == 'youtube':
-                shutil.rmtree(os.getcwd() + '/../../spider/' + job['video'])
+                shutil.rmtree(os.getcwd() + '/' + job['video'])
             else:
                 client.drop_database(job['db'])
             """
@@ -131,7 +151,7 @@ class jobs:
             else:
                 index_url = post_input['index_url']
                 """
-                https://www.youtube.com/user/VOAchina/video
+                https://www.youtube.com/watch?v=BaW_jenozKc
                 """
                 command = "python run.py {} {}".format(data['_id'], index_url)
                 data['status'] = 'running'
