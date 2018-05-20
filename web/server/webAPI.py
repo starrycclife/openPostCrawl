@@ -52,9 +52,11 @@ class videos:
             videos = os.listdir('static/youtube_videos/{}'.format(job_id))
             data = []
             for video in videos:
-                data.append({'title': video.split('.')[0], 'path': '/static/youtube_videos/{}/{}'.format(job_id, video)})
+                data.append(
+                    {'title': video.split('.')[0], 'path': '/static/youtube_videos/{}/{}'.format(job_id, video)})
+            count = len(videos)
             data = data[(page - 1) * limit:page * limit]
-            return json.dumps({'code': 0, 'message': 'get videos successfully', 'data': data})
+            return json.dumps({'code': 0, 'message': 'get videos successfully', 'data': data, 'count': count})
         except Exception as e:
             return json.dumps({'code': 1, 'message': str(e)})
 

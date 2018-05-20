@@ -10,10 +10,6 @@
 
 ![](imgs/2.png)
 
-YouTube和其他站点区别开
-
-如果查询youtube，加一个参数website
-
 ### 删除
 
 ![](imgs/5.png)
@@ -55,3 +51,9 @@ YouTube和其他站点区别开
 ### 获取指定任务视频列表
 
 ![](imgs/6.png)
+
+## cookie
+
+### 设置/更新cookie
+
+![](imgs/7.png)
