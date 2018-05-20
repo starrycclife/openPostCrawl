@@ -49,13 +49,16 @@ class videos:
             page = int(get_input['page'])
             limit = int(get_input['limit'])
             job_id = get_input['job_id']
-            videos = os.listdir('static/youtube_videos/{}'.format(job_id))
             data = []
-            for video in videos:
-                data.append(
-                    {'title': video.split('.')[0], 'path': '/static/youtube_videos/{}/{}'.format(job_id, video)})
-            count = len(videos)
-            data = data[(page - 1) * limit:page * limit]
+            try:
+                videos = os.listdir('static/youtube_videos/{}'.format(job_id))
+                for video in videos:
+                    data.append(
+                        {'title': video.split('.')[0], 'path': '/static/youtube_videos/{}/{}'.format(job_id, video)})
+                count = len(videos)
+                data = data[(page - 1) * limit:page * limit]
+            except:
+                count = 0
             return json.dumps({'code': 0, 'message': 'get videos successfully', 'data': data, 'count': count})
         except Exception as e:
             return json.dumps({'code': 1, 'message': str(e)})
@@ -115,7 +118,10 @@ class jobs:
             2.删除数据库
             """
             if job['website'] == 'youtube':
-                shutil.rmtree(os.getcwd() + '/' + job['video'])
+                try:
+                    shutil.rmtree(os.getcwd() + '/' + job['video'])
+                except Exception as e:
+                    print(e)
             else:
                 client.drop_database(job['db'])
             """
