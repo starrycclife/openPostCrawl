@@ -155,6 +155,7 @@ class jobs:
                 """
                 command = "python run.py {} {}".format(data['_id'], index_url)
                 data['status'] = 'running'
+                data['index_url'] = index_url
                 data['log'] = '{}/log/{}.log'.format(website, data['_id'])
                 data['video'] = '{}/video/{}'.format(website, data['_id'])
             p = subprocess.Popen([command], cwd=os.getcwd() + '/../../spider/{}'.format(website), shell=True)
