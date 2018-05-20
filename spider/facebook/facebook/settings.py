@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import pymongo
 
 # Scrapy settings for facebook project
 #
@@ -43,10 +44,15 @@ DOWNLOAD_DELAY = 10
 # Disable Telnet Console (enabled by default)
 # TELNETCONSOLE_ENABLED = False
 
+client = pymongo.MongoClient("localhost", 27017)
+db = client['web']
+cookie_collection = db['cookies']
+cookie_document = cookie_collection.find_one({'_id': 'facebook'})
+
 # Override the default request headers:
 DEFAULT_REQUEST_HEADERS = {
     # 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.162 Safari/537.36',
-    'Cookie': "c_user=100026187121261; xs=19%3ABn7NOVf4AeVnng%3A2%3A1526379440%3A-1%3A-1;"
+    'Cookie': cookie_document['cookie']
 }
 
 # Enable or disable spider middlewares

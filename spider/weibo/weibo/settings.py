@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import pymongo
 
 # Scrapy settings for sina project
 #
@@ -24,9 +25,15 @@ DOWNLOAD_DELAY = 10
 # The download delay setting will honor only one of:
 # CONCURRENT_REQUESTS_PER_DOMAIN = 16
 # CONCURRENT_REQUESTS_PER_IP = 16
+
+client = pymongo.MongoClient("localhost", 27017)
+db = client['web']
+cookie_collection = db['cookies']
+cookie_document = cookie_collection.find_one({'_id': 'weibo'})
+
 DEFAULT_REQUEST_HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.162 Safari/537.36',
-    'Cookie': "OUTFOX_SEARCH_USER_ID_NCOO=1780588551.4011402; browser=d2VpYm9mYXhpYW4%3D; _T_WM=767a89eeec1856d21bf83f366492de34; ALF=1528973264; SCF=AsJyCasIxgS59OhHHUWjr9OAw83N3BrFKTpCLz2myUf2NPpOwZs9hVnbSFeufTzEnrDFfMwbM2F5sHWZcjnZqrI.; SUB=_2A253_rrTDeRhGeBN6VUX9SvEzT-IHXVVAMabrDV6PUJbktANLUzlkW1NRJ24IFLP_76Z5VhKSihhN6uoT9nTRcnU; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWYACoMUZFHDoS6U9MYf.vu5JpX5K-hUgL.Foq0eoMcSK-RSoe2dJLoI7yV9cyfwgvV97tt; SUHB=0QS5VG1P74Mf40; H5_INDEX_TITLE=nghuyong; H5_INDEX=1"
+    'Cookie': cookie_document['cookie']
 }
 # Disable cookies (enabled by default)
 # COOKIES_ENABLED = False

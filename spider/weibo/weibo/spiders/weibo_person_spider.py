@@ -4,10 +4,12 @@
 根据一个用户递归爬取M层
 """
 import re
-import datetime
+import time
 from pprint import pprint
 import pymongo
-from scrapy import Spider, Selector, Request
+from scrapy import Spider, Selector, Request, signals
+from scrapy.conf import settings
+
 from weibo.items import InformationItem, RelationshipsItem, CommentItem
 
 from weibo.spiders.parse import tweet
@@ -21,6 +23,22 @@ class WeiboPersonSpider(Spider):
         self.N = int(N)
         self.M = int(M)
         self.job_id = int(job_id)
+
+    @classmethod
+    def from_crawler(cls, crawler, *args, **kwargs):
+        spider = super(WeiboPersonSpider, cls).from_crawler(crawler, *args, **kwargs)
+        crawler.signals.connect(spider.spider_close, signals.spider_closed)
+        return spider
+
+    def spider_close(self):
+        client = pymongo.MongoClient("localhost", 27017)
+        db = client['web']
+        collection = db['jobs']
+        jobid = settings['DBNAME']
+        job = collection.find_one({'_id': int(jobid)})
+        job['status'] = 'finish'
+        job['finish_timestamp'] = int(time.time())
+        collection.save(job)
 
     def start_requests(self):
         self.logger.info('starting')
