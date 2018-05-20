@@ -39,12 +39,11 @@ class SearchPost(Spider):
         job = collection.find_one({'_id': int(jobid)})
         M = job['M']
         N = job['N']
-        command = 'scrapy crawl person -a M={} -a N={} -s LOG_FILE=log/{}.log -s DBNAME={} -s CNAME={}'.format(
-            M, N, jobid, jobid, 'person'
-        )
+        command = 'python run.py {} {} {}'.format(M, N, jobid)
         self.logger.info(command)
         p = subprocess.Popen([command], cwd=os.getcwd(), shell=True)
         self.logger.info(os.getcwd())
+        self.logger.info('*' * 100)
         job['pid'] = p.pid
         job['status'] = 'running-person'
         collection.save(job)
