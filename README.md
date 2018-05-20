@@ -8,7 +8,7 @@
 
 ## 抓取要求
 
-### [weibo](https://github.com/nghuyong/openPostCrawl/tree/master/spider/weibo)/facebook/twitter
+### [weibo](https://github.com/nghuyong/openPostCrawl/tree/master/spider/weibo)/[facebook](https://github.com/nghuyong/openPostCrawl/tree/master/spider/facebook)/[twitter](https://github.com/nghuyong/openPostCrawl/tree/master/spider/twitter)
 
 1. 根据关键词抓取含有该关键词的微博数据
 
