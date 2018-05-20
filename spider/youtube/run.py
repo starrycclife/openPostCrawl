@@ -27,11 +27,14 @@ if __name__ == "__main__":
     logger.addHandler(file_handler)
     ydl_opts = {
         'logger': logger,
-        'ignoreerros': True,
+        'ignoreerrors': True,
         'outtmpl': '../../web/server/static/youtube_videos/{}/%(title)s.%(ext)s'.format(job_id)
     }
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([index_url])
+    try:
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([index_url])
+    except Exception as e:
+        logger.info(str(e))
     client = pymongo.MongoClient("localhost", 27017)
     db = client['web']
     collection = db['jobs']
