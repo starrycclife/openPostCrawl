@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+apt-get install mongodb
 mkdir spider/weibo/log
 mkdir spider/facebook/log
 mkdir spider/twitter/log
