@@ -27,6 +27,7 @@ if __name__ == "__main__":
     logger.addHandler(file_handler)
     ydl_opts = {
         'logger': logger,
+        'ignoreerros': True,
         'outtmpl': '../../web/server/static/youtube_videos/{}/%(title)s.%(ext)s'.format(job_id)
     }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
