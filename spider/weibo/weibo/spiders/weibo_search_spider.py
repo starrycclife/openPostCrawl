@@ -30,9 +30,7 @@ class WeiboSearch(Spider):
         job = collection.find_one({'_id': int(jobid)})
         M = job['M']
         N = job['N']
-        command = 'scrapy crawl person -a M={} -a N={} -a job_id={} -s LOG_FILE=log/{}.log -s DBNAME={} -s CNAME={}'.format(
-            M, N, jobid, jobid, jobid, 'person'
-        )
+        command = 'python run.py {} {} {}'.format(M, N, jobid)
         self.logger.info(command)
         p = subprocess.Popen([command], cwd=os.getcwd(), shell=True)
         self.logger.info(os.getcwd())
