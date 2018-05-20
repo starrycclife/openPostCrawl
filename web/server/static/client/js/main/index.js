@@ -14,17 +14,4 @@ layui.use(['jquery'], function () {
 
 
     })
-
-
-
-
-    if (Cookies.get('current_api') == 'youtube-videos') {
-        $('#tweet').hide();
-        $('#video').show();
-
-    } else {
-        $('#video').hide();
-        $('#tweet').show();
-        $('.container').attr("src", "./job-info.html")
-    }
 });
