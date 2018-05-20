@@ -5,3 +5,7 @@
     border: none;
     display:block;
 }
+
+.layui-logo{
+    background: url(https://www.seeingdo.com/img/logo.png) center/90% no-repeat;
+}
