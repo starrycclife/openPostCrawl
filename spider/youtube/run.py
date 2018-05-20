@@ -27,7 +27,7 @@ if __name__ == "__main__":
     logger.addHandler(file_handler)
     ydl_opts = {
         'logger': logger,
-        'outtmpl': '../../web/server/static/youtube_videos/{}/%(playlist_index)s - %(title)s.%(ext)s'.format(job_id)
+        'outtmpl': '../../web/server/static/youtube_videos/{}/%(title)s.%(ext)s'.format(job_id)
     }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([index_url])

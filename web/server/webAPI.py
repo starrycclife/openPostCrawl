@@ -46,9 +46,15 @@ class videos:
         web.header("Access-Control-Allow-Origin", "*")
         try:
             get_input = web.input(_method='get')
+            page = int(get_input['page'])
+            limit = int(get_input['limit'])
             job_id = get_input['job_id']
             videos = os.listdir('static/youtube_videos/{}'.format(job_id))
-            return json.dumps({'code': 0, 'message': 'get videos successfully', 'data': [videos]})
+            data = []
+            for video in videos:
+                data.append({'title': video.split('.')[0], 'path': '/static/youtube_videos/{}/{}'.format(job_id, video)})
+            data = data[(page - 1) * limit:page * limit]
+            return json.dumps({'code': 0, 'message': 'get videos successfully', 'data': data})
         except Exception as e:
             return json.dumps({'code': 1, 'message': str(e)})
 
@@ -157,7 +163,7 @@ class jobs:
                 data['status'] = 'running'
                 data['index_url'] = index_url
                 data['log'] = '{}/log/{}.log'.format(website, data['_id'])
-                data['video'] = '{}/video/{}'.format(website, data['_id'])
+                data['video'] = 'static/youtube_videos/{}/'.format(data['_id'])
             p = subprocess.Popen([command], cwd=os.getcwd() + '/../../spider/{}'.format(website), shell=True)
             data['pid'] = p.pid
             collection.insert(data)
