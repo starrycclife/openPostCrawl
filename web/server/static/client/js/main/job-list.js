@@ -155,7 +155,7 @@ layui.use(['element', 'table', 'jquery', 'layer', 'form'], function () {
       }
       window.parent.location.href = "../job-detail/";
     } else if (layEvent === 'del') {
-      layer.confirm('真的删除行么', function (index) {
+      layer.confirm('是否确认删除此任务', function (index) {
         $.ajax({
           url: host + '/api/jobs?job_id=' + data._id,
           type: "delete",
