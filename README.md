@@ -32,6 +32,17 @@
 
 4. 高级可视化，词云/数据统计等
 
+![](http://onqlxvamk.bkt.clouddn.com/HuYong/WX20180521-110138@2x.png)
+
+![](http://onqlxvamk.bkt.clouddn.com/HuYong/WX20180521-110214@2x.png)
+
+![](http://onqlxvamk.bkt.clouddn.com/HuYong/WX20180521-110154@2x.png)
+
+![](http://onqlxvamk.bkt.clouddn.com/HuYong/WX20180521-110603@2x.png)
+
+![](http://onqlxvamk.bkt.clouddn.com/HuYong/WX20180521-110541@2x.png)
+
+
 ## 贡献代码
 
 1. 克隆代码:
