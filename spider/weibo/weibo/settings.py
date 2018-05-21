@@ -95,4 +95,4 @@ ITEM_PIPELINES = {
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
 # LOG_FILE = "weibo.log"
-LOG_LEVEL = 'DEBUG'
+LOG_LEVEL = 'INFO'
