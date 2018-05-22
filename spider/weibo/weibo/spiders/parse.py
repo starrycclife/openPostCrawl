@@ -16,6 +16,17 @@ def tweet(response):
         tweet_item['user_id_1'] = user_tweet_id.group(2)
         tweet_item['weibo_url_1'] = 'https://weibo.com/{}/{}'.format(tweet_item['user_id_1'],
                                                                      user_tweet_id.group(1))
+
+        like_num = tweet_node.xpath('.//a[contains(text(),"赞")]/text()').extract_first()
+        tweet_item['like_num'] = re.search('\d+', like_num).group()
+
+        repost_num = tweet_node.xpath('.//a[contains(text(),"转发")]/text()').extract_first()
+        tweet_item['repost_num'] = re.search('\d+', repost_num).group()
+
+        comment_num = tweet_node.xpath(
+            './/a[contains(text(),"评论") and not(contains(text(),"原文"))]/text()').extract_first()
+        tweet_item['comment_num'] = re.search('\d+', comment_num).group()
+
         repost_node = tweet_node.xpath('.//span[@class="cmt"]')
         if repost_node:
             repost_node = repost_node[0]
@@ -43,6 +54,10 @@ def tweet(response):
             create_time_node = tweet_node.xpath('.//span[@class="ct"]')[0]
             create_time_info = create_time_node.xpath('string(.)').extract_first()
             tweet_item['created_at_1'] = create_time_info.split('\xa0')[0].strip()
+            try:
+                tweet_item['tool'] = create_time_info.split('\xa0')[1].replace('来自', '').strip()
+            except:
+                pass
             tweet_item['_id'] = tweet_item['weibo_url_1']
             tweet_items.append(tweet_item)
     next_url = selector.xpath('//a[text()="下页"]/@href').extract()
