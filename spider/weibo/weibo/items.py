@@ -44,6 +44,8 @@ class TweetsItem(Item):
     created_at_2 = Field()
     content_2 = Field()
     weibo_url_2 = Field()
+    imgs = Field()
+    imgs_group = Field()
 
 
 class RelationshipsItem(Item):

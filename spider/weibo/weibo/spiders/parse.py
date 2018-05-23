@@ -28,6 +28,19 @@ def tweet(response):
         tweet_item['comment_num'] = re.search('\d+', comment_num).group()
 
         repost_node = tweet_node.xpath('.//span[@class="cmt"]')
+
+        imgs_node = tweet_node.xpath('//a[text()="原图"]/@href')
+
+        if imgs_node:
+            tweet_item['imgs'] = [imgs_node[0]]
+
+        img_group__node = tweet_node.xpath('//a[contains(text(),"组图")]/@href')
+
+        if img_group__node:
+            tweet_node['imgs_group'] = img_group__node[0]
+        else:
+            tweet_node['imgs_group'] = None
+
         if repost_node:
             repost_node = repost_node[0]
             tweet_item['is_repost'] = True
