@@ -251,7 +251,7 @@ layui.use(['element', 'table', 'jquery', 'layer', 'form'], function () {
       ,
     N: function (value, item) {
       if (!current_type) {
-        if (!(1 >= parseInt(value) && parseInt(value) <= 1000))
+        if (!(1 <= parseInt(value) && parseInt(value) <= 1000))
           return 'N值的范围为1~1000';
       }
     }
