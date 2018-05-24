@@ -33,12 +33,12 @@ layui.use(['element', 'table', 'jquery', 'layer', 'form'], function () {
         width: 120
       }, {
         field: 'M',
-        title: 'M',
-        width: 80
+        title: '用户层级M',
+        width: 120
       }, {
         field: 'N',
-        title: 'N',
-        width: 80
+        title: '用户数目N',
+        width: 120
       }, {
         field: 'db',
         title: '数据库',
@@ -251,7 +251,7 @@ layui.use(['element', 'table', 'jquery', 'layer', 'form'], function () {
       ,
     N: function (value, item) {
       if (!current_type) {
-        if (!(1 >= parseInt(value) && parseInt(value) <= 1000))
+        if (!(1 <= parseInt(value) && parseInt(value) <= 1000))
           return 'N值的范围为1~1000';
       }
     }
