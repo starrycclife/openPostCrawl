@@ -32,14 +32,12 @@ def tweet(response):
         imgs_node = tweet_node.xpath('//a[text()="原图"]/@href')
 
         if imgs_node:
-            tweet_item['imgs'] = [imgs_node.extract_first()]
+            tweet_item['imgs'] = imgs_node.extract_first()
 
         img_group__node = tweet_node.xpath('//a[contains(text(),"组图")]/@href')
 
         if img_group__node:
             tweet_item['imgs_group'] = img_group__node.extract_first()
-        else:
-            tweet_item['imgs_group'] = None
 
         if repost_node:
             repost_node = repost_node[0]
