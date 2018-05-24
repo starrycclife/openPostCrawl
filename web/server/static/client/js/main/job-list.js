@@ -32,11 +32,11 @@ layui.use(['element', 'table', 'jquery', 'layer', 'form'], function () {
         title: '关键词',
         width: 120
       }, {
-        field: 'M',
+        field: '用户层级',
         title: 'M',
         width: 80
       }, {
-        field: 'N',
+        field: '用户数目',
         title: 'N',
         width: 80
       }, {
