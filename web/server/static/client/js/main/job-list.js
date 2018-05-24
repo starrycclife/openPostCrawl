@@ -238,5 +238,23 @@ layui.use(['element', 'table', 'jquery', 'layer', 'form'], function () {
     }
   }
 
+  form.verify({
+    M: function (value, item) { //value：表单的值、item：表单的DOM对象
+        if (!current_type) {
+          if (!parseInt(value) > 0)
+            return 'M值必须大于0';
+        }
+      }
+
+      //我们既支持上述函数式的方式，也支持下述数组的形式
+      //数组的两个值分别代表：[正则匹配、匹配不符时的提示文字]
+      ,
+    N: function (value, item) {
+      if (!current_type) {
+        if (!(1 >= parseInt(value) && parseInt(value) <= 1000))
+          return 'N值的范围为1~1000';
+      }
+    }
+  });
 
 });
